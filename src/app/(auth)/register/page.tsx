@@ -13,12 +13,10 @@ import {
   Input,
   VStack,
   Heading,
-  Text,
   useToast,
   InputGroup,
   InputRightElement,
   IconButton,
-  Link,
   Flex,
 } from '@chakra-ui/react';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';

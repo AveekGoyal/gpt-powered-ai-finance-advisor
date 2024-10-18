@@ -14,7 +14,6 @@ import {
   Input,
   VStack,
   Heading,
-  Text,
   useToast,
   InputGroup,
   InputRightElement,

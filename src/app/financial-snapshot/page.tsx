@@ -6,7 +6,6 @@ import {
   Box,
   Container,
   Heading,
-  Text,
   SimpleGrid,
   Button,
   VStack,
@@ -47,7 +46,6 @@ const FinancialSnapshot = () => {
   const [financialHealthScore, setFinancialHealthScore] = useState(0);
 
   const buttonColor = useColorModeValue('white', 'brand');
-  const toast = useToast();
 
   useEffect(() => {
     calculateNetWorth();
@@ -109,7 +107,7 @@ const FinancialSnapshot = () => {
   const expenseData = prepareExpenseData();
 
   const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: any) => {
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
