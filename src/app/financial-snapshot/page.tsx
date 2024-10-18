@@ -38,7 +38,7 @@ const FinancialSnapshot = () => {
   const [financialData, setFinancialData] = useState({
     annualIncome: user?.annualIncome || 0,
     currentSavings: user?.currentSavings || 0,
-    monthlyExpenses: { ...user?.monthlyExpenses } || {},
+    monthlyExpenses: user?.monthlyExpenses || {},
     financialGoals: [...user?.financialGoals || []],
     riskTolerance: user?.riskTolerance || 'medium'
   });
