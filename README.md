@@ -54,8 +54,8 @@ FinanceGuru is a new app that helps you take control of your finances. It offers
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/0xmetaschool/ai-finance-advisor.git
-cd ai-finance-advisor
+git clone https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor.git
+cd gpt-powered-ai-finance-advisor
 ```
 
 **2. Install dependencies:**
