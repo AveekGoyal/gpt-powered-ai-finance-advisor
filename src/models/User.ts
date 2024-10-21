@@ -1,9 +1,6 @@
-// File: src/models/User.ts
-
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// Define the User interface
 interface IUser extends mongoose.Document {
   username: string;
   email: string;
@@ -18,7 +15,6 @@ interface IUser extends mongoose.Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// Define the User schema
 const userSchema = new mongoose.Schema<IUser>({
   username: {
     type: String,
@@ -69,7 +65,6 @@ const userSchema = new mongoose.Schema<IUser>({
   },
 });
 
-// Password hashing middleware
 userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
@@ -77,10 +72,8 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Method to compare passwords
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Create and export the User model
 export default mongoose.models.User || mongoose.model<IUser>('User', userSchema);

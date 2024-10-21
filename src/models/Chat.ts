@@ -1,5 +1,3 @@
-// File: src/models/Chat.ts
-
 import mongoose from 'mongoose';
 
 interface IMessage {

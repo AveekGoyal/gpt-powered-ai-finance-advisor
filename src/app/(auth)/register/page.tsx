@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  Text,
   Flex,
 } from '@chakra-ui/react';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
@@ -49,7 +50,7 @@ const Register = () => {
     }
 
     try {
-      const response = await register(email, email, password); // Using email as username
+      const response = await register(email, email, password);
       if (response && response.user && response.token) {
         toast({
           title: 'Account created.',
@@ -89,9 +90,11 @@ const Register = () => {
     <Flex minHeight="calc(100vh - 60px - 120px)" alignItems="center" justifyContent="center">
       <Box maxWidth="400px" width="100%" p={8} borderWidth={1} borderRadius="lg" boxShadow="lg">
         <VStack spacing={8} align="stretch">
-          <Heading as="h2" size="xl" textAlign="center">
-            Create an Account
-          </Heading>
+        <Heading as="h1" size="xl" textAlign="center">Start Your Financial Makeover Today!</Heading>
+        <Text textAlign="center" fontSize="lg" fontStyle="italic" color="gray.600">
+          We’re here to help—one simple step at a time.
+        </Text>
+
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl id="email" isRequired>

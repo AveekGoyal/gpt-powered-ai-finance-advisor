@@ -1,5 +1,3 @@
-// File: src/app/chat/page.tsx
-
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -64,12 +62,9 @@ export default function Chatbot() {
       setLocalMessages((prevMessages) => [...prevMessages, userMessage]);
       setNewMessage('');
       setIsTyping(true);
-  
       try {
-        const response = await dispatch(sendMessage(newMessage)).unwrap();
-  
+        const response = await dispatch(sendMessage({ message: newMessage, area: 'chat' })).unwrap();
         setIsTyping(false);
-  
         const botMessage = {
           role: 'assistant',
           content: response,

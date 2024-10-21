@@ -1,5 +1,3 @@
-// File: src/app/api/goals/route.ts
-
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import Goal from '@/models/Goal';

@@ -48,8 +48,6 @@ export const register = async (username: string, email: string, password: string
 };
 
 
-// src/lib/api.ts
-
 export const completeOnboarding = async (onboardingData: any, token: string) => {
   try {
     const url = `${API_URL}/onboarding/complete`;

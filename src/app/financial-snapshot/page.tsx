@@ -54,7 +54,7 @@ const FinancialSnapshot = () => {
 
   const calculateNetWorth = () => {
     const totalAssets = financialData.currentSavings;
-    const totalLiabilities = 0; // Assuming no liabilities for now
+    const totalLiabilities = 0;
     setNetWorth(totalAssets - totalLiabilities);
   };
 
@@ -64,7 +64,7 @@ const FinancialSnapshot = () => {
     setFinancialHealthScore(score);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => { // Updated type
+  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => { 
     const { name, value } = e.target;
     setFinancialData(prev => ({
       ...prev,

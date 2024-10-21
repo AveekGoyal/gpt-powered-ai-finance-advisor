@@ -1,5 +1,3 @@
-// File: src/models/Goal.ts
-
 import mongoose from 'mongoose';
 
 interface IGoal extends mongoose.Document {

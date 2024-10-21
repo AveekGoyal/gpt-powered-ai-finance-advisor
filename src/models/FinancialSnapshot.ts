@@ -1,5 +1,3 @@
-// File: src/models/FinancialSnapshot.ts
-
 import mongoose from 'mongoose';
 
 interface IFinancialSnapshot extends mongoose.Document {

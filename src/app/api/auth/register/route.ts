@@ -1,5 +1,3 @@
-// File: src/app/api/auth/register/route.ts
-
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/User';

@@ -1,5 +1,3 @@
-// File: src/app/api/users/route.ts
-
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/User';
@@ -41,5 +39,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'REGISTRATION_FAILED', message: 'Registration failed' }, { status: 500 });
   }
 }
-
-// You can add other methods (GET, PUT, DELETE) here as needed

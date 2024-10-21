@@ -35,7 +35,7 @@ export async function generatePersonalizedFinancialAdvice(user: any, question: s
 
     Given the user prompt and user profile, give the response according to the user's question. If the question is general, provide a general response.
     If the user is asking for advice or any other help, use the information of the user profile to provide a good response. And build on the chat as you move further. Do not give advice if not asked for this.
-    Structure your response in Markdown format.
+    Structure your response in Markdown format. Do not start the response with "Assitant", "Response" keep it general.
   `;
 
   try {
@@ -70,12 +70,12 @@ export async function generateGoalStrategy(user: any, goal: any): Promise<string
     - Target Date: ${new Date(goal.targetDate).toLocaleDateString()}
 
     Given the user's financial profile and goal details, generate a personalized strategy to help them achieve this financial goal. Include specific recommendations, potential challenges, and actionable steps. Structure your response in Markdown format.
-    In the response do not mention something like Dear Client or [User name] no placeholders should be present.
+    In the response do not mention something like Dear Client or [User name] no placeholders should be present. Do not start the response with "Assitant", "Response" keep it general.
   `;
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4", // Changed from "text-davinci-002" to "gpt-4"
+      model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 1000,
       n: 1,

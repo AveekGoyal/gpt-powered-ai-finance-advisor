@@ -1,5 +1,3 @@
-// File: src/lib/db.ts
-
 import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
@@ -8,13 +6,11 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
-// Define the type for our cached mongoose connection
 type CachedMongoose = {
   conn: mongoose.Connection | null;
   promise: Promise<mongoose.Connection> | null;
 };
 
-// Declare the global property for TypeScript
 declare global {
   var mongoose: {
     conn: mongoose.Connection | null;

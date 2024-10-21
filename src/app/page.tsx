@@ -1,131 +1,249 @@
 'use client'
 
-import { useSelector } from 'react-redux';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { sendMessage, getChatHistory, resetChat } from '@/store/chatSlice';
+import { useToast } from '@chakra-ui/react';
+import ReactMarkdown from 'react-markdown';
+import LandingPage from '../components/LandingPage';
 import {
   Box,
   Container,
   Heading,
-  SimpleGrid,
-  Icon,
   Text,
-  Stack,
   VStack,
-  useToast,
+  Textarea,
+  Button,
+  Flex,
+  Spinner,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { FaChartLine, FaRegLightbulb, FaBullseye, FaRobot } from 'react-icons/fa';
-import { RootState } from '@/store';
-import LandingPage from '@/components/LandingPage';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AppDispatch, RootState } from '@/store';
+import OptionButtons from '../components/OptionButtons';
+import TypewriterText from '../components/Typewriter';
 
-interface FeatureProps {
-  title: string;
-  text: string;
-  icon: React.ElementType;
-  onClick: () => void;
-}
-
-const Feature: React.FC<FeatureProps> = ({ title, text, icon, onClick }) => {
-  return (
-    <Stack
-      align={'center'}
-      justify={'center'}
-      rounded={'xl'}
-      bg={'white'}
-      boxShadow={'lg'}
-      p={6}
-      cursor="pointer"
-      onClick={onClick}
-      transition="all 0.3s"
-      _hover={{
-        transform: 'translateY(-5px)',
-        boxShadow: 'xl',
-      }}
-    >
-      <Icon as={icon} w={10} h={10} color={'brand.primary'} />
-      <Text fontWeight={600}>{title}</Text>
-      <Text color={'gray.600'} align={'center'}>{text}</Text>
-    </Stack>
-  );
-};
+const MotionBox = motion(Box as any);
+const MotionFlex = motion(Flex as any);
 
 export default function Home() {
+  const dispatch = useDispatch<AppDispatch>();
+  const chatState = useSelector((state: RootState) => state.chat);
+  const { loading, error } = chatState;
+  const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentTopic, setCurrentTopic] = useState<string | null>(null);
+  const [localMessages, setLocalMessages] = useState<Array<{ role: string; content: string }>>([]);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const { user } = useSelector((state: RootState) => state.auth);
-  const router = useRouter();
   const toast = useToast();
 
-  const features = [
-    {
-      title: 'Financial Snapshot',
-      text: 'Get a clear picture of your current financial situation.',
-      icon: FaChartLine,
-      path: '/financial-snapshot',
-    },
-    {
-      title: 'AI-Powered Advice',
-      text: 'Receive personalized financial recommendations.',
-      icon: FaRegLightbulb,
-      path: '/financial-advice',
-    },
-    {
-      title: 'Goal-Based Planning',
-      text: 'Set and track your financial goals with AI assistance.',
-      icon: FaBullseye,
-      path: '/goals',
-    },
-    {
-      title: 'AI Chatbot',
-      text: 'Get instant answers to your financial questions.',
-      icon: FaRobot,
-      path: '/chat',
-    },
-  ];
+  const bgColor = useColorModeValue('white', 'gray.900');
+  const textColor = useColorModeValue('gray.800', 'gray.100');
+  const accentColor = useColorModeValue('blue.500', 'blue.300');
+  const userBgColor = 'white';
+  const userTextColor = 'black';
+  const assistantBgColor = 'gray.100';
+  const assistantTextColor = 'black';
 
-  const handleFeatureClick = (path: string) => {
-    if (user && !user.onboardingCompleted) {
-      toast({
-        title: "Onboarding Required",
-        description: "Please complete your onboarding before accessing this feature.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
-      router.push('/onboarding');
-    } else {
-      router.push(path);
+  useEffect(() => {
+    if (user) {
+      const fetchChatHistory = async () => {
+        const history = await dispatch(getChatHistory()).unwrap();
+        setLocalMessages(history);
+      };
+      fetchChatHistory();
     }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [localMessages, isTyping]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewMessage(e.target.value);
+  };
+
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (newMessage.trim()) {
+      const userMessage = { role: 'user', content: newMessage };
+      setLocalMessages(prev => [...prev, userMessage]);
+      setNewMessage('');
+      setIsTyping(true);
+      
+      try {
+        const response = await dispatch(sendMessage({ message: userMessage.content, area: currentTopic || 'general' })).unwrap();
+        setIsTyping(false);
+        setLocalMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      } catch (error) {
+        console.error('Error sending message:', error);
+        setIsTyping(false);
+        toast({
+          title: "Message Not Sent",
+          description: "We couldn't send your message. Please try again later or refresh the page.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleSelectOption = (option: string) => {
+    setCurrentTopic(option);
+    setNewMessage(`Let's discuss ${option}`);
+  };
+
+  const handleNewChat = () => {
+    dispatch(resetChat());
+    setLocalMessages([]);
+    setCurrentTopic(null);
+    setNewMessage('');
   };
 
   if (!user) {
     return <LandingPage />;
   }
-
   return (
-    <Box>
-      <Container maxW={'5xl'} py={12}>
-        <VStack spacing={2} textAlign="center">
-          <Heading as="h1" fontSize="4xl">
-            Welcome, {user.username}!
-          </Heading>
-          <Text fontSize="lg" color={'gray.500'}>
-            Manage your finances and get personalized advice with AI assistance.
-          </Text>
-          {!user.onboardingCompleted && (
-            <Text color={'red.500'} fontWeight="bold">
-              Please complete your onboarding to access all features.
-            </Text>
-          )}
-        </VStack>
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} mt={10}>
-          {features.map((feature, index) => (
-            <Feature
-              key={index}
-              title={feature.title}
-              text={feature.text}
-              icon={feature.icon}
-              onClick={() => handleFeatureClick(feature.path)}
-            />
-          ))}
-        </SimpleGrid>
+    <Box bg={bgColor} color={textColor} height="80vh" display="flex" flexDirection="column">
+      <Container maxW="800px" height="100%" py={4} display="flex" flexDirection="column">
+        <Flex direction="column" align="center" mb={4}>
+          <Heading as="h1" size="lg" textAlign="center">Welcome to Your Financial AI Assistant</Heading>
+          <Text mt={2} textAlign="center">Ask me about budgeting, investing, financial planning, or any money-related topics!</Text>
+        </Flex>
+        
+        <Flex direction="column" flex={1} borderRadius="lg" borderWidth="3px" borderColor={useColorModeValue('gray.200', 'gray.700')} overflow="hidden">
+          <Box flex={1} overflowY="auto" p={4} ref={chatContainerRef}>
+            {localMessages.length === 0 ? (
+              <Flex direction="column" justify="center" align="center" height="100%">
+                <MotionBox
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <VStack spacing={8}>
+                    <TypewriterText
+                      text="How can I help you today?"
+                      fontSize="2xl"
+                      fontWeight="bold"
+                      textAlign="center"
+                    />
+                    <OptionButtons onSelectOption={handleSelectOption} />
+                  </VStack>
+                </MotionBox>
+              </Flex>
+            ) : (
+              <AnimatePresence>
+                {localMessages.map((message, index) => (
+                  <MotionFlex
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    justifyContent={message.role === 'user' ? 'flex-end' : 'flex-start'}
+                    mb={4}
+                  >
+                    <Flex
+                      bg={message.role === 'user' ? userBgColor : assistantBgColor}
+                      color={message.role === 'user' ? userTextColor : assistantTextColor}
+                      borderRadius="2xl"
+                      py={2}
+                      px={4}
+                      maxWidth="70%"
+                      boxShadow="md"
+                      borderWidth="1px"
+                      borderColor={message.role === 'user' ? 'gray.300' : 'gray.200'}
+                      flexDirection="column"
+                    >
+                      {message.role === 'user' ? (
+                        <Text wordBreak="break-word">{message.content}</Text>
+                      ) : (
+                        <Box>
+                          <ReactMarkdown components={{
+                            p: (props) => <Text mb={2} {...props} />,
+                            ul: (props) => <Box as="ul" pl={4} mb={2} {...props} />,
+                            ol: (props) => <Box as="ol" pl={4} mb={2} {...props} />,
+                            li: (props) => <Box as="li" mb={1} {...props} />,
+                          }}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </Box>
+                      )}
+                    </Flex>
+                  </MotionFlex>
+                ))}
+              </AnimatePresence>
+            )}
+            {isTyping && (
+              <MotionFlex
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                alignSelf="flex-start"
+                bg={assistantBgColor}
+                color={assistantTextColor}
+                borderRadius="2xl"
+                py={2}
+                px={4}
+                mb={4}
+                maxWidth="70%"
+                boxShadow="md"
+                borderWidth="1px"
+                borderColor="gray.200"
+              >
+                <Flex alignItems="center">
+                  <Spinner size="sm" mr={2} />
+                  <Text>AI Financial Advisor is typing...</Text>
+                </Flex>
+              </MotionFlex>
+            )}
+            {error && <Text color="red.500">{error}</Text>}
+          </Box>
+          
+          <Flex p={3} borderTop="1px" borderColor={useColorModeValue('gray.200', 'gray.700')}>
+            <form onSubmit={handleSendMessage} style={{ display: 'flex', width: '100%' }}>
+              <Textarea
+                value={newMessage}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message here (Press Enter to send, Shift+Enter for new line)"
+                mr={2}
+                flex={1}
+                rows={1}
+                resize="none"
+              />
+              <Button 
+                type="submit" 
+                colorScheme="blue"
+                bg={accentColor}
+                color="white"
+                isLoading={loading}
+              >
+                Send
+              </Button>
+              {localMessages.length > 0 && (
+                <Button 
+                  onClick={handleNewChat} 
+                  ml={2} 
+                  variant="outline" 
+                  borderRadius="md"
+                >
+                  New Chat
+                </Button>
+              )}
+            </form>
+          </Flex>
+        </Flex>
       </Container>
     </Box>
   );

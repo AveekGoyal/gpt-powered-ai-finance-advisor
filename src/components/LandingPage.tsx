@@ -26,8 +26,8 @@ export default function LandingPage() {
             </Text>
           </Heading>
           <Text color={'gray.600'} fontSize={{ base: 'md', md: 'lg' }} maxW="2xl">
-            AI Finance Advisor helps you take control of your financial future. Get personalized advice,
-            set goals, and track your progress with the power of artificial intelligence.
+            AI Powered FinanceGuru helps you take control of your financial future. Get personalized advice,
+            set goals, and check your financial snapshot with the power of artificial intelligence.
           </Text>
           <Link href="/register" passHref>
             <Button
@@ -48,8 +48,6 @@ export default function LandingPage() {
           </Link>
         </Stack>
       </Container>
-
-      {/* Features Section */}
       <Container maxW={'7xl'} py={16}>
         <Heading textAlign="center" mb={12} fontSize="3xl" color="black">
           Key Features
@@ -73,7 +71,6 @@ export default function LandingPage() {
         </SimpleGrid>
       </Container>
 
-      {/* Pricing Section */}
       <Container maxW={'7xl'} py={16} textAlign="center">
         <Heading fontSize="3xl" mb={6} color="black">
           Pricing

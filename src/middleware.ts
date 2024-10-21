@@ -1,10 +1,12 @@
-// File: src/middleware.ts
-
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
 export async function middleware(request: NextRequest) {
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { status: 200 })
+  }
+
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
 
   if (!token) {

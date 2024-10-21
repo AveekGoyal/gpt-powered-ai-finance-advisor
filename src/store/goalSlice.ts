@@ -1,5 +1,3 @@
-// File: src/store/goalSlice.ts
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchGoals as apiFetchGoals, addGoal as apiAddGoal, updateGoal as apiUpdateGoal, deleteGoal as apiDeleteGoal } from '@/lib/api';
 import { RootState } from './index';

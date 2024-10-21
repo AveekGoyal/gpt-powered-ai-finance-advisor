@@ -70,18 +70,18 @@ const GoalPlanning = () => {
           id: editingGoalId, 
           updatedData: { 
             ...newGoal, 
-            targetAmount: Number(newGoal.targetAmount), // Ensure targetAmount is a number
-            currentAmount: Number(newGoal.currentAmount) // Ensure currentAmount is a number
+            targetAmount: Number(newGoal.targetAmount),
+            currentAmount: Number(newGoal.currentAmount)
           } 
         })).unwrap();
         setEditingGoalId(null);
       } else {
         await dispatch(addGoal({ 
           ...newGoal, 
-          targetAmount: Number(newGoal.targetAmount), // Convert to number
-          currentAmount: Number(newGoal.currentAmount), // Convert to number
-          progress: 0, // Default value for progress
-          strategy: '' // Default value for strategy
+          targetAmount: Number(newGoal.targetAmount), 
+          currentAmount: Number(newGoal.currentAmount),
+          progress: 0, 
+          strategy: ''
         })).unwrap();
       }
 

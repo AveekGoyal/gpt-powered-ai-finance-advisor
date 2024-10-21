@@ -19,6 +19,7 @@ import {
   InputRightElement,
   IconButton,
   Flex,
+  Text,
 } from '@chakra-ui/react';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { AppDispatch } from '@/store';
@@ -67,9 +68,11 @@ const Login = () => {
     <Flex minHeight="calc(100vh - 60px - 120px)" alignItems="center" justifyContent="center">
       <Box maxWidth="400px" width="100%" p={8} borderWidth={1} borderRadius="lg" boxShadow="lg">
         <VStack spacing={8} align="stretch">
-          <Heading as="h2" size="xl" textAlign="center">
-            Welcome Back
-          </Heading>
+        <Heading as="h1" size="xl" textAlign="center" mb={2}>Welcome Back</Heading>
+        <Text textAlign="center" fontSize="lg" fontStyle="italic" color="gray.600" mt={-5}>
+          Let's Tackle Those Finances!
+        </Text>
+
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl id="email" isRequired>

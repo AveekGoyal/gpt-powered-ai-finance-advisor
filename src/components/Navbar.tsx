@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,23 +12,30 @@ export default function NavBar() {
   const { user } = useSelector((state: RootState) => state.auth);
   const toast = useToast();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await dispatch(logout());
     router.push('/');
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
-  const handleProfileClick = () => {
+  const handleNavigation = (path: string) => {
     if (user && !user.onboardingCompleted) {
       toast({
         title: "Onboarding Required",
-        description: "Please complete your onboarding before accessing your profile.",
+        description: "Please complete your onboarding before accessing this feature.",
         status: "warning",
         duration: 5000,
         isClosable: true,
       });
       router.push('/onboarding');
     } else {
-      router.push('/profile');
+      router.push(path);
     }
   };
 
@@ -45,63 +51,70 @@ export default function NavBar() {
         borderStyle={'solid'}
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align={'center'}
-        justify={'center'}
+        justify={'space-between'}
         w="100%"
       >
-        <Flex flex={1}></Flex>
-
-        <Heading 
+        <Heading
           as={Link}
-          href={user ? '/' : '/'}
-          textAlign={'center'}
-          fontSize={'2xl'} 
+          href={'/'}
+          fontSize={'2xl'}
           fontFamily={'heading'}
           color={useColorModeValue('gray.800', 'white')}
           fontWeight={'bold'}
         >
-          AI Finance Advisor
+          AI Powered FinanceGuru
         </Heading>
-
-        <HStack spacing={8} flex={1} justify="flex-end">
-          {user ? ( 
+        <HStack spacing={4}>
+          {user && (
             <>
               <Button
-                onClick={handleProfileClick}
+                onClick={() => handleNavigation('/financial-snapshot')}
                 fontSize={'sm'}
                 fontWeight={400}
-                variant={'link'}
+                variant={'ghost'}
+              >
+                Financial Snapshot
+              </Button>
+              <Button
+                onClick={() => handleNavigation('/goals')}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'ghost'}
+              >
+                Financial Goals
+              </Button>
+              <Button
+                onClick={() => handleNavigation('/profile')}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'ghost'}
               >
                 Profile
               </Button>
               <Button
-                display={{ base: 'none', md: 'inline-flex' }}
-                fontSize={'sm'}
-                fontWeight={600}
-                color={'white'}
-                bg={'black'}
                 onClick={handleLogout}
-                _hover={{
-                  bg: 'gray.700',
-                }}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'ghost'}
               >
                 Logout
               </Button>
             </>
-          ) : ( 
+          )}
+          {!user && (
             <>
               <Button
                 as={Link}
                 href="/login"
                 fontSize={'sm'}
                 fontWeight={400}
-                variant={'link'}
+                variant={'ghost'}
               >
                 Sign In
               </Button>
               <Button
                 as={Link}
                 href="/register"
-                display={{ base: 'none', md: 'inline-flex' }}
                 fontSize={'sm'}
                 fontWeight={600}
                 color={'white'}
