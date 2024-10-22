@@ -63,7 +63,6 @@ const CustomCheckbox = (props: any) => {
   );
 };
 
-
 const Onboarding = () => {
   const buttonColor = useColorModeValue('white', 'brand');
   const [step, setStep] = useState(1);
@@ -90,13 +89,10 @@ const Onboarding = () => {
   });
 
   useEffect(() => {
-    console.log('Current formData:', formData);
-    console.log('Current financialGoals:', financialGoals);
   }, [formData, financialGoals]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    console.log(`handleInputChange called with name: ${name}, value: ${value}`);
     setFormData(prevData => ({
       ...prevData,
       [name]: value
@@ -104,7 +100,6 @@ const Onboarding = () => {
   };
 
   const handleExpenseChange = (category: string, value: string) => {
-    console.log(`handleExpenseChange called with category: ${category}, value: ${value}`);
     setFormData(prevData => ({
       ...prevData,
       monthlyExpenses: {
@@ -116,8 +111,6 @@ const Onboarding = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSubmit called');
-
     try {
       const onboardingData = {
         ...formData,
@@ -128,10 +121,7 @@ const Onboarding = () => {
           Object.entries(formData.monthlyExpenses).map(([key, value]) => [key, Number(value)])
         )
       };
-      console.log('Onboarding data to be submitted:', onboardingData);
-
       const response = await completeOnboarding(onboardingData, token || '');
-      console.log('Onboarding response:', response);
       dispatch(setCredentials({ ...response, token: token || '' }));
       router.push('/');
       toast({
@@ -154,12 +144,10 @@ const Onboarding = () => {
   };
 
   const nextStep = () => {
-    console.log(`nextStep called, current step: ${step}`);
     setStep(step + 1);
   };
 
   const prevStep = () => {
-    console.log(`prevStep called, current step: ${step}`);
     setStep(step - 1);
   };
 
@@ -175,7 +163,6 @@ const Onboarding = () => {
   };
 
   const renderStep = () => {
-    console.log(`renderStep called, current step: ${step}`);
     switch (step) {
       case 1:
         return (

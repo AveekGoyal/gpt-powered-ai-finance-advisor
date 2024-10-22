@@ -29,7 +29,6 @@ export async function POST(req: Request) {
 
     const strategy = await generateGoalStrategy(user, newGoal);
     newGoal.strategy = strategy;
-
     newGoal.progress = (newGoal.currentAmount / newGoal.targetAmount) * 100;
 
     await newGoal.save();

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     await connectToDatabase();
     const { message, area = 'general' } = await req.json();
     const authHeader = req.headers.get('Authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'No token provided' }, { status: 401 });
     }
@@ -32,26 +32,20 @@ export async function POST(req: Request) {
     }
 
     const userId = decoded.userId;
-
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
     let chat = await Chat.findOne({ user: user._id });
     if (!chat) {
       chat = new Chat({ user: user._id, messages: [] });
     }
 
     chat.messages.push({ role: 'user', content: message });
-
     const context = chat.messages.slice(-10);
-
     const aiResponse = await generatePersonalizedFinancialAdvice(user, message, area);
-
     chat.messages.push({ role: 'assistant', content: aiResponse });
     await chat.save();
-
     return NextResponse.json({ message: aiResponse });
   } catch (error) {
     console.error('Error in chat:', error);
@@ -76,7 +70,6 @@ export async function GET(req: Request) {
     }
 
     const userId = decoded.userId;
-
     const chat = await Chat.findOne({ user: userId });
 
     if (!chat) {

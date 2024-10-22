@@ -22,7 +22,6 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({ text, speed = 50, ...pr
         prevTextRef.current = newText;
         i++;
       } else {
-        console.log('Typing complete');
         clearInterval(typingInterval);
       }
     }, speed);

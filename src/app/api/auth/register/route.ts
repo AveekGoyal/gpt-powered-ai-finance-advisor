@@ -16,8 +16,6 @@ export async function POST(req: Request) {
     const newUser = new User({ username, email, password });
     await newUser.save();
 
-    console.log('User registered:', newUser);
-
     const token = jwt.sign(
       { userId: newUser._id, username: newUser.username },
       process.env.JWT_SECRET as string,
