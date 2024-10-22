@@ -62,7 +62,7 @@ export default function NavBar() {
           color={useColorModeValue('gray.800', 'white')}
           fontWeight={'bold'}
         >
-          AI Powered FinanceGuru
+          FinanceGPT
         </Heading>
         <HStack spacing={4}>
           {user && (
@@ -73,7 +73,7 @@ export default function NavBar() {
                 fontWeight={400}
                 variant={'ghost'}
               >
-                Financial Snapshot
+                Snapshot
               </Button>
               <Button
                 onClick={() => handleNavigation('/goals')}
@@ -81,7 +81,7 @@ export default function NavBar() {
                 fontWeight={400}
                 variant={'ghost'}
               >
-                Financial Goals
+                Goals
               </Button>
               <Button
                 onClick={() => handleNavigation('/profile')}

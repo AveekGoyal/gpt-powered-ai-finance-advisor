@@ -1,10 +1,10 @@
-# **AI-Powered FinanceGuru**
+# **FinanceGPT**
 
-FinanceGuru is a new app that helps you take control of your finances. It offers personalized financial advice, similar to consulting with a human advisor. With features like AI chat and goal planning, FinanceGuru helps you achieve your financial goals. Powered by Next.js and OpenAI's GPT-4, this app provides tailored advice based on your unique financial situation.
+FinanceGPT is a new app that helps you take control of your finances. It offers personalized financial advice, similar to consulting with a human advisor. With features like AI chat and goal planning, FinanceGPT helps you achieve your financial goals. Powered by Next.js and OpenAI's GPT-4, this app provides tailored advice based on your unique financial situation.
 
 ## Table of Contents
 
-- [**AI-Powered FinanceGuru**](#ai-powered-financeguru)
+- [**FinanceGPT**](#financegpt)
   - [Table of Contents](#table-of-contents)
   - [Live Demo](#live-demo)
   - [Features](#features)
@@ -54,8 +54,8 @@ FinanceGuru is a new app that helps you take control of your finances. It offers
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor.git
-cd gpt-powered-ai-finance-advisor
+git clone https://github.com/0xmetaschool/ai-finance-advisor.git
+cd ai-finance-advisor
 ```
 
 **2. Install dependencies:**
@@ -88,7 +88,7 @@ npm run dev
 
 **7. Open your browser and navigate to `http://localhost:3000`**
 
-You should now see the AI Powered FinanceGuru  application running with Next.js.
+You should now see the AI Powered FinanceGPT  application running with Next.js.
 
 ## Screenshots
 
@@ -123,7 +123,7 @@ You should now see the AI Powered FinanceGuru  application running with Next.js.
 
 ## Contributing
 
-We love contributions! Here's how you can help make the AI-powered FinanceGuru even better:
+We love contributions! Here's how you can help make the FinanceGPT even better:
 
 1. Fork the project (`gh repo fork https://github.com/0xmetaschool/ai-finance-advisor.git`)
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)

@@ -193,14 +193,18 @@ const FinancialSnapshot = () => {
             </Box>
           </SimpleGrid>
           
-          <Button 
-            colorScheme="brand"
-            bg="black"
-            color={buttonColor}
-            onClick={() => setIsEditing(true)}
-          >
-            Update Financial Details
-          </Button>
+          <Box display="flex" justifyContent="center" mt={8}>
+            <Button 
+              colorScheme="brand"
+              bg="black"
+              color={buttonColor}
+              onClick={() => setIsEditing(true)}
+              size="md"
+              width="200px"
+            >
+              Update Financial Details
+            </Button>
+          </Box>
         </VStack>
       ) : (
         <form onSubmit={handleSubmit}>

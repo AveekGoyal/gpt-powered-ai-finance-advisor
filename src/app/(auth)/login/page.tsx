@@ -49,6 +49,7 @@ const Login = () => {
         }
       };
       dispatch(setCredentials(userData));
+      sessionStorage.setItem('isFreshLogin', 'true');
       router.push('/');
     } catch (err) {
       console.error('Login error:', err);

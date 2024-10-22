@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { sendMessage, getChatHistory, resetChat } from '@/store/chatSlice';
+import { sendMessage, resetChat, getChatHistory } from '@/store/chatSlice';
 import { useToast } from '@chakra-ui/react';
 import ReactMarkdown from 'react-markdown';
 import LandingPage from '../components/LandingPage';
@@ -17,7 +17,9 @@ import {
   Flex,
   Spinner,
   useColorModeValue,
+  IconButton,
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppDispatch, RootState } from '@/store';
 import OptionButtons from '../components/OptionButtons';
@@ -25,6 +27,7 @@ import TypewriterText from '../components/Typewriter';
 
 const MotionBox = motion(Box as any);
 const MotionFlex = motion(Flex as any);
+const MotionIconButton = motion(IconButton as any);
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,32 +38,89 @@ export default function Home() {
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [localMessages, setLocalMessages] = useState<Array<{ role: string; content: string }>>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
+
+
   const toast = useToast();
+  
 
   const bgColor = useColorModeValue('white', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.100');
   const accentColor = useColorModeValue('blue.500', 'blue.300');
+  const optionsBgColor = useColorModeValue('gray.50', 'gray.800');
   const userBgColor = 'white';
   const userTextColor = 'black';
   const assistantBgColor = 'gray.100';
   const assistantTextColor = 'black';
 
+
   useEffect(() => {
     if (user) {
-      const fetchChatHistory = async () => {
-        const history = await dispatch(getChatHistory()).unwrap();
-        setLocalMessages(history);
-      };
-      fetchChatHistory();
+      const isFreshLogin = sessionStorage.getItem('isFreshLogin') === 'true';
+      
+      if (isFreshLogin) {
+        console.log('Fresh login detected - starting new chat');
+        setLocalMessages([]);
+        dispatch(resetChat());
+        
+      } 
+      else {
+        console.log('Existing session - fetching chat history');
+        const fetchChatHistory = async () => {
+          try {
+            const history = await dispatch(getChatHistory()).unwrap();
+            setLocalMessages(history);
+          } catch (error) {
+            console.error('Failed to fetch chat history:', error);
+            toast({
+              title: "Error Loading Chat History",
+              description: "Could not load your chat history. Starting fresh chat.",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        };
+        fetchChatHistory();
+      }
     }
   }, [dispatch, user]);
 
-  useEffect(() => {
+  // Scroll position handler
+  const handleScroll = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isAtBottom);
+    }
+  };
+
+  // Scroll event listener
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleScroll);
+      return () => chatContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  // Auto scroll on new messages
+  useEffect(() => {
+    if (chatContainerRef.current && !showScrollButton) {
+      scrollToBottom();
     }
   }, [localMessages, isTyping]);
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(e.target.value);
@@ -73,7 +133,7 @@ export default function Home() {
       setLocalMessages(prev => [...prev, userMessage]);
       setNewMessage('');
       setIsTyping(true);
-      
+      sessionStorage.removeItem('isFreshLogin'); // Clear the flag
       try {
         const response = await dispatch(sendMessage({ message: userMessage.content, area: currentTopic || 'general' })).unwrap();
         setIsTyping(false);
@@ -114,35 +174,116 @@ export default function Home() {
   if (!user) {
     return <LandingPage />;
   }
+
+
   return (
-    <Box bg={bgColor} color={textColor} height="80vh" display="flex" flexDirection="column">
-      <Container maxW="800px" height="100%" py={4} display="flex" flexDirection="column">
-        <Flex direction="column" align="center" mb={4}>
-          <Heading as="h1" size="lg" textAlign="center">Welcome to Your Financial AI Assistant</Heading>
-          <Text mt={2} textAlign="center">Ask me about budgeting, investing, financial planning, or any money-related topics!</Text>
-        </Flex>
-        
-        <Flex direction="column" flex={1} borderRadius="lg" borderWidth="3px" borderColor={useColorModeValue('gray.200', 'gray.700')} overflow="hidden">
-          <Box flex={1} overflowY="auto" p={4} ref={chatContainerRef}>
-            {localMessages.length === 0 ? (
-              <Flex direction="column" justify="center" align="center" height="100%">
-                <MotionBox
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+    <Box 
+      bg={bgColor} 
+      color={textColor} 
+      height="calc(100vh - 40px - 120px)"
+      position="fixed"
+      top="70px"
+      left="0"
+      right="0"
+      overflow="hidden"
+      zIndex={1}
+    >
+      <Container maxW="800px" h="100%" position="relative">
+        {localMessages.length === 0 ? (
+          <Flex direction="column" align="center" justify="center" h="100%" py={8}>
+            <VStack spacing={6} mb={8}>
+              <Heading size="lg" textAlign="center">Welcome to FinanceGPT</Heading>
+              <TypewriterText
+                text="How can I help you today?"
+                fontSize="xl"
+                fontWeight="medium"
+                textAlign="center"
+              />
+            </VStack>
+
+            <Box w="full" maxW="700px">
+              <form onSubmit={handleSendMessage}>
+                <Flex mb={6}>
+                  <Textarea
+                    value={newMessage}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type your message here..."
+                    mr={2}
+                    rows={1}
+                    resize="none"
+                    borderRadius="2xl"
+                    border="none"
+                    boxShadow="1px 1px 1px 2px rgba(0,0,0,0.1)"
+                    py={3}
+                    _focus={{
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                      outline: "none",
+                      border: "none"
+                    }}
+                    _hover={{
+                      boxShadow: "0 3px 6px rgba(0,0,0,0.1)"
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    bg={accentColor}
+                    color="white"
+                    isLoading={loading}
+                    borderRadius="2xl"
+                    px={6}
+                  >
+                    Send
+                  </Button>
+                </Flex>
+              </form>
+
+              <Box 
+                bg={"white"} 
+                p={6} 
+                borderRadius="2xl" 
+              >
+                <OptionButtons onSelectOption={handleSelectOption} />
+              </Box>
+            </Box>
+          </Flex>
+        ) : (
+          <Flex direction="column" h="100%" position="relative">
+                <Box 
+                  flex={1} 
+                  overflowY="auto" 
+                  px={2} 
+                  ref={chatContainerRef}
+                  pb="120px"
+                  maxW="100%"
+                  width="full"
+                  sx={{
+                    // Chrome, Safari, and Edge styling
+                    '&::-webkit-scrollbar': {
+                      width: '8px',
+                      background: 'transparent'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: 'transparent'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '20px',
+                      border: '2px solid transparent',
+                      backgroundClip: 'padding-box'
+                    },
+                    '&::-webkit-scrollbar-thumb:hover': {
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: '20px',
+                      border: '2px solid transparent',
+                      backgroundClip: 'padding-box'
+                    },
+                    // Firefox styling
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(0, 0, 0, 0.2) transparent'
+                  }}
                 >
-                  <VStack spacing={8}>
-                    <TypewriterText
-                      text="How can I help you today?"
-                      fontSize="2xl"
-                      fontWeight="bold"
-                      textAlign="center"
-                    />
-                    <OptionButtons onSelectOption={handleSelectOption} />
-                  </VStack>
-                </MotionBox>
-              </Flex>
-            ) : (
               <AnimatePresence>
                 {localMessages.map((message, index) => (
                   <MotionFlex
@@ -161,7 +302,7 @@ export default function Home() {
                       py={2}
                       px={4}
                       maxWidth="70%"
-                      boxShadow="md"
+                      boxShadow="sm"
                       borderWidth="1px"
                       borderColor={message.role === 'user' ? 'gray.300' : 'gray.200'}
                       flexDirection="column"
@@ -184,66 +325,130 @@ export default function Home() {
                   </MotionFlex>
                 ))}
               </AnimatePresence>
-            )}
-            {isTyping && (
-              <MotionFlex
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                alignSelf="flex-start"
-                bg={assistantBgColor}
-                color={assistantTextColor}
-                borderRadius="2xl"
-                py={2}
-                px={4}
-                mb={4}
-                maxWidth="70%"
-                boxShadow="md"
-                borderWidth="1px"
-                borderColor="gray.200"
-              >
-                <Flex alignItems="center">
-                  <Spinner size="sm" mr={2} />
-                  <Text>AI Financial Advisor is typing...</Text>
-                </Flex>
-              </MotionFlex>
-            )}
-            {error && <Text color="red.500">{error}</Text>}
-          </Box>
-          
-          <Flex p={3} borderTop="1px" borderColor={useColorModeValue('gray.200', 'gray.700')}>
-            <form onSubmit={handleSendMessage} style={{ display: 'flex', width: '100%' }}>
-              <Textarea
-                value={newMessage}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder="Type your message here (Press Enter to send, Shift+Enter for new line)"
-                mr={2}
-                flex={1}
-                rows={1}
-                resize="none"
-              />
-              <Button 
-                type="submit" 
-                colorScheme="blue"
-                bg={accentColor}
-                color="white"
-                isLoading={loading}
-              >
-                Send
-              </Button>
-              {localMessages.length > 0 && (
+              
+              {isTyping && (
+                <MotionFlex
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  alignSelf="flex-start"
+                  bg={assistantBgColor}
+                  color={assistantTextColor}
+                  borderRadius="2xl"
+                  py={2}
+                  px={4}
+                  mb={4}
+                  maxWidth="70%"
+                  boxShadow="sm"
+                  borderWidth="1px"
+                  borderColor="gray.200"
+                >
+                  <Flex alignItems="center">
+                    <Spinner size="sm" mr={2} />
+                    <Text>AI Financial Advisor is typing...</Text>
+                  </Flex>
+                </MotionFlex>
+              )}
+            </Box>
+
+            <AnimatePresence>
+              {showScrollButton && (
+                <MotionIconButton
+                  icon={<ChevronDownIcon boxSize={6} />}
+                  aria-label="Scroll to bottom"
+                  position="fixed"
+                  bottom="120px"
+                  right="40px"
+                  borderRadius="full"
+                  boxShadow="lg"
+                  onClick={scrollToBottom}
+                  colorScheme="blue"
+                  size="lg"
+                  bg="white"
+                  color="gray.600"
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "xl"
+                  }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  zIndex={999}
+                />
+              )}
+            </AnimatePresence>
+            
+            <Box 
+              position="absolute"
+              bottom={0}
+              left={0}
+              right={0}
+              bg="transparent"
+              p={1}
+              zIndex={1}
+              bgColor={"white"}
+              borderRadius={"2xl"}
+              // boxShadow="0 -10px 20px rgba(0,0,0,0.1)" 
+              _before={{
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                bg: bgColor,
+                opacity: 0.8,
+                backdropFilter: 'blur(8px)',
+                zIndex: -1
+              }}
+            >
+              <form onSubmit={handleSendMessage} style={{ display: 'flex', width: '100%' }}>
+                <Textarea
+                  value={newMessage}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type your message here (Press Enter to send, Shift+Enter for new line)"
+                  mr={2}
+                  flex={1}
+                  rows={2}
+                  h={"10"}
+                  resize="none"
+                  borderRadius="2xl"
+                  bg = "white"
+                  border="none"
+                  boxShadow="1px 1px 1px 2px rgba(0,0,0,0.1)"
+                  _focus={{
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    outline: "none",
+                    border: "none"
+                  }}
+                  _hover={{
+                    boxShadow: "0 3px 6px rgba(0,0,0,0.1)"
+                  }}
+                />
+                <Button 
+                  type="submit" 
+                  colorScheme="blue"
+                  bg={accentColor}
+                  color="white"
+                  isLoading={loading}
+                  borderRadius="2xl"
+                >
+                  Send
+                </Button>
                 <Button 
                   onClick={handleNewChat} 
                   ml={2} 
                   variant="outline" 
-                  borderRadius="md"
+                  borderRadius="2xl"
                 >
                   New Chat
                 </Button>
-              )}
-            </form>
+              </form>
+            </Box>
           </Flex>
-        </Flex>
+        )}
+        {error && <Text color="red.500" mt={2}>{error}</Text>}
       </Container>
     </Box>
   );

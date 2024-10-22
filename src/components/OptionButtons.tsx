@@ -25,8 +25,9 @@ const OptionButtons: React.FC<OptionButtonsProps> = ({ onSelectOption }) => {
           key={topic}
           onClick={() => onSelectOption(topic)}
           bg={buttonBg}
+          borderRadius={"2xl"}
           size="sm"
-          m={1}
+          m={2}
         >
           {topic}
         </Button>
