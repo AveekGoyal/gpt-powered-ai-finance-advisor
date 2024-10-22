@@ -54,8 +54,8 @@ FinanceGuru is a new app that helps you take control of your finances. It offers
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/0xmetaschool/ai-finance-advisor.git
-cd ai-finance-advisor
+git clone https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor.git
+cd gpt-powered-ai-finance-advisor
 ```
 
 **2. Install dependencies:**
@@ -65,7 +65,11 @@ npm install
 npm install react-icons
 ```
 
-**3. Set up environment variables:**
+**3. Set up the database:**
+
+Ensure you have [MongoDB](https://www.mongodb.com/) installed and running on your system, or use a cloud-hosted MongoDB service like [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database). Create a new Cluster, select a free plan, and copy the connection string, this will be required in the next step.
+
+**4. Set up environment variables:**
 
 Create a `.env.local` file in the root directory and add the following variables:
 
@@ -76,29 +80,7 @@ JWT_SECRET=your_jwt_secret
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-**4. Set up the database:**
-
-Ensure you have [MongoDB](https://www.mongodb.com/) installed and running on your system, or use a cloud-hosted MongoDB service like [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database).
-
-**5. Update Next.js configuration:**
-
-Ensure your `next.config.js` file includes the necessary configurations:
-
-```jsx
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  env: {
-    MONGODB_URI: process.env.MONGODB_URI,
-    JWT_SECRET: process.env.JWT_SECRET,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  },
-}
-
-module.exports = nextConfig
-```
-
-**6. Run the development server:**
+**5. Run the development server:**
 
 ```bash
 npm run dev
