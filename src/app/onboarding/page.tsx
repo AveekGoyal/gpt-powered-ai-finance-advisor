@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect, KeyboardEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +22,9 @@ import {
   useCheckbox,
   useCheckboxGroup,
   chakra,
-  Flex
+  Flex,
+  InputGroup,
+  InputLeftAddon,
 } from '@chakra-ui/react';
 import { AppDispatch, RootState } from '@/store';
 
@@ -170,15 +171,19 @@ const Onboarding = () => {
             <Heading size="md">Income Information</Heading>
             <Text>Understanding your income helps us provide more accurate financial advice.</Text>
             <FormControl>
-              <FormLabel htmlFor="annualIncome">Annual Income:</FormLabel>
-              <Input
-                type="number"
-                id="annualIncome"
-                name="annualIncome"
-                value={formData.annualIncome}
-                onChange={handleInputChange}
-                required
-              />
+              <FormLabel htmlFor="annualIncome">Annual Income (USD):</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children="$" />
+                <Input
+                  type="number"
+                  id="annualIncome"
+                  name="annualIncome"
+                  value={formData.annualIncome}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter amount in USD"
+                />
+              </InputGroup>
             </FormControl>
           </VStack>
         );
@@ -189,13 +194,17 @@ const Onboarding = () => {
             <Text>Knowing your expenses helps us understand your spending habits and suggest better budgeting strategies.</Text>
             {Object.entries(formData.monthlyExpenses).map(([category, value]) => (
               <FormControl key={category}>
-                <FormLabel htmlFor={category}>{category.charAt(0).toUpperCase() + category.slice(1)}:</FormLabel>
-                <Input
-                  type="number"
-                  id={category}
-                  value={value}
-                  onChange={(e) => handleExpenseChange(category, e.target.value)}
-                />
+                <FormLabel htmlFor={category}>{category.charAt(0).toUpperCase() + category.slice(1)} (USD):</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children="$" />
+                  <Input
+                    type="number"
+                    id={category}
+                    value={value}
+                    onChange={(e) => handleExpenseChange(category, e.target.value)}
+                    placeholder="Enter amount in USD"
+                  />
+                </InputGroup>
               </FormControl>
             ))}
           </VStack>
@@ -206,15 +215,19 @@ const Onboarding = () => {
             <Heading size="md">Savings and Goals</Heading>
             <Text>Your current savings and financial goals help us tailor our advice to your specific situation.</Text>
             <FormControl>
-              <FormLabel htmlFor="currentSavings">Current Savings:</FormLabel>
-              <Input
-                type="number"
-                id="currentSavings"
-                name="currentSavings"
-                value={formData.currentSavings}
-                onChange={handleInputChange}
-                required
-              />
+              <FormLabel htmlFor="currentSavings">Current Savings (USD):</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children="$" />
+                <Input
+                  type="number"
+                  id="currentSavings"
+                  name="currentSavings"
+                  value={formData.currentSavings}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter amount in USD"
+                />
+              </InputGroup>
             </FormControl>
             <FormControl>
               <FormLabel>Financial Goals:</FormLabel>
@@ -273,27 +286,18 @@ const Onboarding = () => {
     <Container maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
         <Heading>Complete Your Financial Profile</Heading>
-        <Text>Help us understand your financial situation to provide personalized advice.</Text>
+        <Text>Help us understand your financial situation to provide personalized advice. All amounts are in USD.</Text>
         <Progress value={(step / 4) * 100} />
         <form onSubmit={handleSubmit} onKeyPress={handleKeyPress}>
           {renderStep()}
           <VStack mt={6} spacing={4}>
-            {step > 1 && (
-              <Button 
-                onClick={prevStep} 
-                colorScheme="brand" 
-                bg="black"
-                color={buttonColor}
-              >
-                Previous
-              </Button>
-            )}
             {step < 4 && (
               <Button 
                 onClick={nextStep} 
                 colorScheme="brand" 
                 bg="black"
                 color={buttonColor}
+                w="20%"
               >
                 Next
               </Button>
@@ -304,8 +308,19 @@ const Onboarding = () => {
                 colorScheme="brand" 
                 bg="black"
                 color={buttonColor}
+                w="40%"
               >
                 Complete Onboarding
+              </Button>
+            )}
+            {step > 1 && (
+              <Button 
+                onClick={prevStep} 
+                colorScheme="brand" 
+                variant="outline"
+                w="20%"
+              >
+                Previous
               </Button>
             )}
           </VStack>
