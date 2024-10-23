@@ -23,7 +23,7 @@ FinanceGPT is a new app that helps you take control of your finances. It offers 
 
 ## Live Demo
 
-[Link to live demo - To be added]
+Live demo - [FiannceGPT](https://ai-finance-advisor-tawny.vercel.app/)
 
 ## Features
 
@@ -92,7 +92,7 @@ You should now see the AI Powered FinanceGPT  application running with Next.js.
 
 ## Screenshots
 
-[2-3 screenshots to be added]
+<img src="https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor/blob/main/public/images/FinanceGPT%201.png?raw=true" width="400" height="300"> <img src="https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor/blob/main/public/images/FinanceGPT%202.png?raw=true" width="400" height="300">
 
 ## How to use the application
 
