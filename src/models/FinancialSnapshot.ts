@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Define the interface for a financial snapshot
 interface IFinancialSnapshot extends mongoose.Document {
   user: mongoose.Types.ObjectId;
   income: number;
@@ -9,6 +10,7 @@ interface IFinancialSnapshot extends mongoose.Document {
   createdAt: Date;
 }
 
+// Define the financial snapshot schema
 const financialSnapshotSchema = new mongoose.Schema<IFinancialSnapshot>({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -38,4 +40,5 @@ const financialSnapshotSchema = new mongoose.Schema<IFinancialSnapshot>({
   }
 });
 
+// Export the FinancialSnapshot model
 export default mongoose.models.FinancialSnapshot || mongoose.model<IFinancialSnapshot>('FinancialSnapshot', financialSnapshotSchema);

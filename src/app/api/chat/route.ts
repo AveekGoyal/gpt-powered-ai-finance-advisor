@@ -5,6 +5,7 @@ import User from '@/models/User';
 import { generatePersonalizedFinancialAdvice } from '@/lib/openai';
 import jwt from 'jsonwebtoken';
 
+// Verifies the JWT token.
 const verifyToken = (token: string) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
@@ -14,6 +15,7 @@ const verifyToken = (token: string) => {
   }
 };
 
+// Handles POST request to process new chat messages.
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
@@ -36,16 +38,23 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    // Find or create a chat for the user
     let chat = await Chat.findOne({ user: user._id });
     if (!chat) {
       chat = new Chat({ user: user._id, messages: [] });
     }
 
     chat.messages.push({ role: 'user', content: message });
-    const context = chat.messages.slice(-10);
+    const context = chat.messages.slice(-10); 
+
+    // Generate AI response using the provided context
     const aiResponse = await generatePersonalizedFinancialAdvice(user, message, area);
+    
+    // Add AI response to the chat and save
     chat.messages.push({ role: 'assistant', content: aiResponse });
     await chat.save();
+    
     return NextResponse.json({ message: aiResponse });
   } catch (error) {
     console.error('Error in chat:', error);
@@ -53,6 +62,7 @@ export async function POST(req: Request) {
   }
 }
 
+// Handles GET request to fetch chat history.
 export async function GET(req: Request) {
   try {
     await connectToDatabase();
@@ -83,6 +93,7 @@ export async function GET(req: Request) {
   }
 }
 
+// Handles DELETE request to clear chat history.
 export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
@@ -101,6 +112,7 @@ export async function DELETE(req: Request) {
 
     const userId = decoded.userId;
 
+    // Find and delete the chat for the user
     await Chat.findOneAndDelete({ user: userId });
 
     return NextResponse.json({ message: 'Chat history deleted successfully' });

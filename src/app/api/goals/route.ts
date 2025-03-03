@@ -4,6 +4,7 @@ import Goal from '@/models/Goal';
 import User from '@/models/User';
 import { generateGoalStrategy } from '@/lib/openai';
 
+// Handles POST request to create a new financial goal.
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
@@ -19,6 +20,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Create a new goal with the provided data and user ID
     const newGoal = new Goal({
       user: user._id,
       type,
@@ -27,9 +29,12 @@ export async function POST(req: Request) {
       currentAmount
     });
 
-    const strategy = await generateGoalStrategy(user, newGoal);
+    // Generate a personalized strategy for the goal using OpenAI
+    const strategy = await generateGoalStrategy(user, newGoal); 
     newGoal.strategy = strategy;
-    newGoal.progress = (newGoal.currentAmount / newGoal.targetAmount) * 100;
+    
+    // Calculate initial progress
+    newGoal.progress = (newGoal.currentAmount / newGoal.targetAmount) * 100; 
 
     await newGoal.save();
     return NextResponse.json(newGoal, { status: 201 });
@@ -39,6 +44,7 @@ export async function POST(req: Request) {
   }
 }
 
+// Handles GET request to fetch all goals for the user.
 export async function GET(req: Request) {
   try {
     await connectToDatabase();
@@ -48,6 +54,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
+    // Fetch all goals for the user
     const goals = await Goal.find({ user: userId });
     return NextResponse.json(goals);
   } catch (error) {

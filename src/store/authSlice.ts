@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// Define the User interface
 interface User {
   id: string;
   username: string;
@@ -12,13 +13,15 @@ interface User {
   riskTolerance?: string;
 }
 
+// Define the AuthState interface
 interface AuthState {
   user: User | null;
   token: string | null;
 }
 
+// Load user data from localStorage
 const loadUserFromStorage = (): AuthState => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') { 
     try {
       const serializedUser = localStorage.getItem('user');
       const serializedToken = localStorage.getItem('token');
@@ -35,12 +38,15 @@ const loadUserFromStorage = (): AuthState => {
   return { user: null, token: null };
 };
 
+// Set initial state with user data from localStorage or null
 const initialState: AuthState = loadUserFromStorage();
 
+// Create the auth slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    // Set user credentials (login/register)
     setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -49,6 +55,7 @@ const authSlice = createSlice({
         localStorage.setItem('token', action.payload.token);
       }
     },
+    // Update user's onboarding status
     updateOnboardingStatus: (state, action: PayloadAction<boolean>) => {
       if (state.user) {
         state.user.onboardingCompleted = action.payload;
@@ -57,6 +64,7 @@ const authSlice = createSlice({
         }
       }
     },
+    // Log out the user
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -68,6 +76,7 @@ const authSlice = createSlice({
   },
 });
 
+// Export actions and reducer
 export const { setCredentials, updateOnboardingStatus, logout } = authSlice.actions;
 
 export default authSlice.reducer;

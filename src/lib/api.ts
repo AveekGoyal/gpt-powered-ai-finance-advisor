@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+// Set the base API URL
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
+// Function to handle user login
 export const login = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, { email, password });
@@ -16,6 +18,7 @@ export const login = async (email: string, password: string) => {
   }
 };
 
+// Function to handle user registration
 export const register = async (username: string, email: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/auth/register`, { username, email, password });
@@ -40,7 +43,7 @@ export const register = async (username: string, email: string, password: string
   }
 };
 
-
+// Function to complete user onboarding
 export const completeOnboarding = async (onboardingData: any, token: string) => {
   try {
     const url = `${API_URL}/onboarding/complete`;
@@ -64,6 +67,7 @@ export const completeOnboarding = async (onboardingData: any, token: string) => 
   }
 };
 
+// Helper function to handle API errors
 const handleApiError = (error: unknown) => {
   if (axios.isAxiosError(error)) {
     if (error.response) {
@@ -78,6 +82,7 @@ const handleApiError = (error: unknown) => {
   }
 };  
 
+// Function to update user's financial information
 export const updateFinancialInfo = async (financialData: any, token: string) => {
   try {
     const response = await axios.put(
@@ -93,6 +98,7 @@ export const updateFinancialInfo = async (financialData: any, token: string) => 
   }
 };
 
+// Function to get financial advice from the API
 export const getFinancialAdvice = async (question: string, area: string) => {
   try {
     const token = localStorage.getItem('token');
@@ -113,6 +119,7 @@ export const getFinancialAdvice = async (question: string, area: string) => {
   }
 };
 
+// Function to fetch user's goals
 export const fetchGoals = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/goals`, {
@@ -125,6 +132,7 @@ export const fetchGoals = async (token: string) => {
   }
 };
 
+// Function to add a new goal
 export const addGoal = async (goal: any, token: string) => {
   try {
     const response = await axios.post(`${API_URL}/goals`, goal, {
@@ -137,6 +145,7 @@ export const addGoal = async (goal: any, token: string) => {
   }
 };
 
+// Function to update an existing goal
 export const updateGoal = async (id: string, updatedData: any, token: string) => {
   try {
     const response = await axios.put(`${API_URL}/goals/${id}`, updatedData, {
@@ -149,6 +158,7 @@ export const updateGoal = async (id: string, updatedData: any, token: string) =>
   }
 };
 
+// Function to delete a goal
 export const deleteGoal = async (id: string, token: string) => {
   try {
     await axios.delete(`${API_URL}/goals/${id}`, {
@@ -161,6 +171,7 @@ export const deleteGoal = async (id: string, token: string) => {
   }
 };
 
+// Function to send a chat message
 export const sendChatMessage = async (message: string, token: string) => {
   try {
     const response = await axios.post(`${API_URL}/chat`, { message }, {
@@ -173,6 +184,7 @@ export const sendChatMessage = async (message: string, token: string) => {
   }
 };
 
+// Function to get chat history
 export const getChatHistory = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/chat`, {
@@ -184,4 +196,3 @@ export const getChatHistory = async (token: string) => {
     handleApiError(error);
   }
 };
-

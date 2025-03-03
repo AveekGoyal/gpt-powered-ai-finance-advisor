@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Define the interface for a financial goal
 interface IGoal extends mongoose.Document {
   user: mongoose.Types.ObjectId;
   type: 'retirement' | 'homePurchase' | 'education' | 'other';
@@ -10,6 +11,7 @@ interface IGoal extends mongoose.Document {
   strategy: string;
 }
 
+// Define the goal schema
 const goalSchema = new mongoose.Schema<IGoal>({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -43,4 +45,5 @@ const goalSchema = new mongoose.Schema<IGoal>({
   }
 }, { timestamps: true });
 
+// Export the Goal model
 export default mongoose.models.Goal || mongoose.model<IGoal>('Goal', goalSchema);

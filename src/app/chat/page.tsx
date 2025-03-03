@@ -24,6 +24,8 @@ export default function Chatbot() {
   const chatState = useSelector((state: RootState) => state.chat);
   const { messages, loading, error } = chatState;
   const [newMessage, setNewMessage] = useState('');
+
+  // State for managing messages displayed in the chat
   const [localMessages, setLocalMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [isTyping, setIsTyping] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -36,12 +38,14 @@ export default function Chatbot() {
   }, [dispatch]);
 
   useEffect(() => {
+    // Initialize local messages with fetched messages
     if (messages.length > 0 && localMessages.length === 0) {
       setLocalMessages(messages);
     }
   }, [messages, localMessages.length]);
 
   useEffect(() => {
+    // Scroll to the bottom of the chat container when new messages are added
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
@@ -51,6 +55,7 @@ export default function Chatbot() {
     setNewMessage(e.target.value);
   };
 
+  // Handles sending a new message to the chatbot.
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
@@ -62,7 +67,9 @@ export default function Chatbot() {
       setLocalMessages((prevMessages) => [...prevMessages, userMessage]);
       setNewMessage('');
       setIsTyping(true);
+      
       try {
+        // Dispatch action to send message and await response
         const response = await dispatch(sendMessage({ message: newMessage, area: 'chat' })).unwrap();
         setIsTyping(false);
         const botMessage = {
@@ -90,11 +97,15 @@ export default function Chatbot() {
   const assistantBgColor = useColorModeValue('green.100', 'green.700');
 
   return (
-    <Container maxW="container.xl" py={10}>
-      <VStack spacing={4} align="stretch" h="70vh">
+    // Main container for the chatbot component
+    <Container maxW="container.xl" py={10} minH="calc(100vh - 188px - 120px)">
+      <VStack spacing={4} align="stretch" h="calc(100vh - 188px - 160px)">
         <Heading>AI Financial Advisor</Heading>
         <Text>Ask me about financial planning, budgeting, or improving your financial health.</Text>
+
+        {/* Chat container */}
         <Box flex={1} overflowY="auto" borderWidth={1} borderRadius="md" p={4} bg={bgColor} ref={chatContainerRef}>
+          {/* Render chat messages */}
           {localMessages.map((msg, index) => (
             <Flex
               key={index}
@@ -110,6 +121,7 @@ export default function Chatbot() {
                 {msg.role === 'user' ? (
                   <Text>{msg.content}</Text>
                 ) : (
+                  // Render AI responses with markdown support
                   <ReactMarkdown components={{
                     p: (props) => <Text mb={2} {...props} />,
                     ul: (props) => <Box as="ul" pl={4} mb={2} {...props} />,
@@ -122,6 +134,8 @@ export default function Chatbot() {
               </Box>
             </Flex>
           ))}
+
+          {/* "Typing" indicator */}
           {isTyping && (
             <Flex justifyContent="flex-start" mb={2}>
               <Box
@@ -137,8 +151,11 @@ export default function Chatbot() {
               </Box>
             </Flex>
           )}
+
           {error && <Text color="red.500">{error}</Text>}
         </Box>
+
+        {/* Input and send button */}
         <form onSubmit={handleSendMessage}>
           <Flex>
             <Input

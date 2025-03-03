@@ -30,12 +30,14 @@ import {
 import { AppDispatch, RootState } from '@/store';
 
 const GoalPlanning = () => {
+  // Access Redux store and component state
   const dispatch = useDispatch<AppDispatch>();
   const goalsState = useSelector((state: RootState) => state.goals);
   const goals = goalsState?.goals || [];
   const loading = goalsState?.loading || false;
   const error = goalsState?.error || null;
 
+  // State for new goal form and editing existing goals
   const [newGoal, setNewGoal] = useState({
     type: 'retirement',
     targetAmount: '',
@@ -46,12 +48,15 @@ const GoalPlanning = () => {
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
 
+  // Determine button color based on color mode
   const buttonColor = useColorModeValue('white', 'brand');
 
+  // Fetch goals when the component mounts
   useEffect(() => {
     dispatch(fetchGoals());
   }, [dispatch]);
 
+  // Handle input changes in the form
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewGoal({ 
@@ -60,12 +65,14 @@ const GoalPlanning = () => {
     });
   };
 
+  // Handle form submission for adding or updating goals
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
       if (editingGoalId) {
+        // Update existing goal
         await dispatch(updateGoal({ 
           id: editingGoalId, 
           updatedData: { 
@@ -76,6 +83,7 @@ const GoalPlanning = () => {
         })).unwrap();
         setEditingGoalId(null);
       } else {
+        // Add new goal
         await dispatch(addGoal({ 
           ...newGoal, 
           targetAmount: Number(newGoal.targetAmount), 
@@ -85,6 +93,7 @@ const GoalPlanning = () => {
         })).unwrap();
       }
 
+      // Reset form and fetch updated goals
       setNewGoal({ type: 'retirement', targetAmount: '', targetDate: '', currentAmount: '' });
       dispatch(fetchGoals());
       toast({
@@ -107,11 +116,13 @@ const GoalPlanning = () => {
     }
   };
 
+  // Handle editing an existing goal
   const handleEdit = (goal: any) => {
     setNewGoal(goal);
     setEditingGoalId(goal._id);
   };
 
+  // Handle deleting a goal
   const handleDelete = async (id: string) => {
     try {
       await dispatch(deleteGoal(id)).unwrap();
@@ -134,6 +145,7 @@ const GoalPlanning = () => {
     }
   };
 
+  // Display loading or error states
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text color="red.500">Error: {error}</Text>;
 

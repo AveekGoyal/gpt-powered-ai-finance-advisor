@@ -28,16 +28,17 @@ import {
 } from '@chakra-ui/react';
 import { AppDispatch, RootState } from '@/store';
 
+// Custom Checkbox component with styling
 const CustomCheckbox = (props: any) => {
   const { state, getCheckboxProps, getInputProps, getLabelProps, htmlProps } =
     useCheckbox(props);
 
   return (
     <chakra.label
-      display='flex'
+      display='flex'  
       flexDirection='row'
       alignItems='center'
-      gridColumnGap={4}
+      gridColumnGap={4}  
       bg='transparent'
       rounded='lg'
       px={3}
@@ -65,6 +66,7 @@ const CustomCheckbox = (props: any) => {
 };
 
 const Onboarding = () => {
+  // Define state for the component
   const buttonColor = useColorModeValue('white', 'brand');
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -80,11 +82,13 @@ const Onboarding = () => {
     riskTolerance: 'medium'
   });
 
+  // Access router, Redux store, and toast
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { token } = useSelector((state: RootState) => state.auth);
   const toast = useToast();
 
+  // State for managing financial goals using checkbox group
   const { value: financialGoals, getCheckboxProps } = useCheckboxGroup({
     defaultValue: [],
   });
@@ -92,14 +96,17 @@ const Onboarding = () => {
   useEffect(() => {
   }, [formData, financialGoals]);
 
+  // Handle changes in input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData(prevData  => ({
       ...prevData,
-      [name]: value
+      [name]: value  
+
     }));
   };
 
+  // Handle changes in monthly expense fields
   const handleExpenseChange = (category: string, value: string) => {
     setFormData(prevData => ({
       ...prevData,
@@ -110,9 +117,11 @@ const Onboarding = () => {
     }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Prepare onboarding data for API call
       const onboardingData = {
         ...formData,
         financialGoals,
@@ -144,14 +153,17 @@ const Onboarding = () => {
     }
   };
 
+  // Proceed to the next step
   const nextStep = () => {
     setStep(step + 1);
   };
 
+  // Go back to the previous step
   const prevStep = () => {
     setStep(step - 1);
   };
 
+  // Handle 'Enter' key press for navigation and submission
   const handleKeyPress = (e: KeyboardEvent<HTMLFormElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -163,6 +175,7 @@ const Onboarding = () => {
     }
   };
 
+  // Render the current step's content
   const renderStep = () => {
     switch (step) {
       case 1:

@@ -24,15 +24,18 @@ import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { AppDispatch } from '@/store';
 
 const Register = () => {
+  // State variables for form inputs and loading state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const toast = useToast();
 
+  // Handles form submission for user registration.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -59,6 +62,8 @@ const Register = () => {
           duration: 3000,
           isClosable: true,
         });
+
+        // Dispatch action to store user credentials in Redux store
         dispatch(setCredentials({
           user: { 
             id: response.user.id,
@@ -68,7 +73,8 @@ const Register = () => {
           },
           token: response.token
         }));
-        router.push('/onboarding');
+
+        router.push('/onboarding'); 
       } else {
         throw new Error('Invalid response structure from server');
       }
@@ -87,14 +93,17 @@ const Register = () => {
   };
 
   return (
+    // Main flex container for page layout
     <Flex minHeight="calc(100vh - 60px - 120px)" alignItems="center" justifyContent="center">
+      {/* Registration form container */}
       <Box maxWidth="400px" width="100%" p={8} borderWidth={1} borderRadius="lg" boxShadow="lg">
         <VStack spacing={8} align="stretch">
-        <Heading as="h1" size="xl" textAlign="center">Start Your Financial Makeover Today!</Heading>
-        <Text textAlign="center" fontSize="lg" fontStyle="italic" color="gray.600">
-          We’re here to help—one simple step at a time.
-        </Text>
+          <Heading as="h1" size="xl" textAlign="center">Start Your Financial Makeover Today!</Heading>
+          <Text textAlign="center" fontSize="lg" fontStyle="italic" color="gray.600">
+            We’re here to help—one simple step at a time.
+          </Text>
 
+          {/* Registration form */}
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl id="email" isRequired>
@@ -135,6 +144,7 @@ const Register = () => {
                   placeholder="Confirm your password"
                 />
               </FormControl>
+
               <Button
                 type="submit"
                 color="black"

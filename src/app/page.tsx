@@ -25,11 +25,13 @@ import { AppDispatch, RootState } from '@/store';
 import OptionButtons from '../components/OptionButtons';
 import TypewriterText from '../components/Typewriter';
 
+// Apply motion to Chakra UI components
 const MotionBox = motion(Box as any);
 const MotionFlex = motion(Flex as any);
 const MotionIconButton = motion(IconButton as any);
 
 export default function Home() {
+  // Access Redux store and component state
   const dispatch = useDispatch<AppDispatch>();
   const chatState = useSelector((state: RootState) => state.chat);
   const { loading, error } = chatState;
@@ -42,10 +44,9 @@ export default function Home() {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
-
   const toast = useToast();
-  
 
+  // Define color variables based on color mode
   const bgColor = useColorModeValue('white', 'gray.900');
   const textColor = useColorModeValue('gray.800', 'gray.100');
   const accentColor = useColorModeValue('blue.500', 'blue.300');
@@ -55,19 +56,17 @@ export default function Home() {
   const assistantBgColor = 'gray.100';
   const assistantTextColor = 'black';
 
-
+  // Fetch chat history or start new chat based on login status
   useEffect(() => {
     if (user) {
       const isFreshLogin = sessionStorage.getItem('isFreshLogin') === 'true';
       
       if (isFreshLogin) {
-        console.log('Fresh login detected - starting new chat');
         setLocalMessages([]);
         dispatch(resetChat());
         
       } 
       else {
-        console.log('Existing session - fetching chat history');
         const fetchChatHistory = async () => {
           try {
             const history = await dispatch(getChatHistory()).unwrap();
@@ -88,7 +87,7 @@ export default function Home() {
     }
   }, [dispatch, user]);
 
-  // Scroll position handler
+  // Handle scroll events in the chat container
   const handleScroll = () => {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
@@ -97,35 +96,41 @@ export default function Home() {
     }
   };
 
-  // Scroll event listener
+  // Add scroll event listener to the chat container
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
     if (chatContainer) {
       chatContainer.addEventListener('scroll', handleScroll);
-      return () => chatContainer.removeEventListener('scroll', handleScroll);
+      return () => chatContainer.removeEventListener('scroll', handleScroll);  
+
     }
   }, []);
 
-  // Auto scroll on new messages
+  // Scroll to bottom when new messages are added or typing state changes
   useEffect(() => {
     if (chatContainerRef.current && !showScrollButton) {
       scrollToBottom();
     }
   }, [localMessages, isTyping]);
 
+  // Scroll to the bottom of the chat container
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
+      chatContainerRef.current.scrollTo({  
+
         top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth'
+        behavior: 'smooth'  
+
       });
     }
   };
 
+  // Handle input changes in the message textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(e.target.value);
   };
 
+  // Send a new message to the assistant
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (newMessage.trim()) {
@@ -152,18 +157,22 @@ export default function Home() {
     }
   };
 
+  // Handle key down events in the message textarea
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendMessage();  
+
     }
   };
 
+  // Handle option selection from the OptionButtons component
   const handleSelectOption = (option: string) => {
     setCurrentTopic(option);
     setNewMessage(`Let's discuss ${option}`);
   };
 
+  // Start a new chat session
   const handleNewChat = () => {
     dispatch(resetChat());
     setLocalMessages([]);
@@ -171,16 +180,16 @@ export default function Home() {
     setNewMessage('');
   };
 
+  // Redirect to landing page if user is not logged in
   if (!user) {
     return <LandingPage />;
   }
-
 
   return (
     <Box 
       bg={bgColor} 
       color={textColor} 
-      height="calc(100vh - 40px - 120px)"
+      height="calc(100vh - 150px - 120px)"
       position="fixed"
       top="70px"
       left="0"

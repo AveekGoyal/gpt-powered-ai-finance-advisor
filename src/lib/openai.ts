@@ -1,9 +1,11 @@
 import OpenAI from 'openai';
 
+// Initialize the OpenAI API client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, 
 });
 
+// Function to generate general financial advice
 export async function generateFinancialAdvice(prompt: string): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
@@ -11,7 +13,7 @@ export async function generateFinancialAdvice(prompt: string): Promise<string> {
       messages: [{ role: "user", content: prompt }],
       max_tokens: 1000,
       n: 1,
-      temperature: 0.7,
+      temperature: 0.7, 
     });
 
     return response.choices[0].message.content?.trim() || '';
@@ -21,7 +23,9 @@ export async function generateFinancialAdvice(prompt: string): Promise<string> {
   }
 }
 
+// Function to generate personalized financial advice based on user profile
 export async function generatePersonalizedFinancialAdvice(user: any, question: string, area: string): Promise<string> {
+  // Construct the prompt for the OpenAI API
   const prompt = `
     User Profile:
     - Annual Income: $${user.annualIncome}
@@ -54,7 +58,9 @@ export async function generatePersonalizedFinancialAdvice(user: any, question: s
   }
 }
 
+// Function to generate a strategy for achieving a specific financial goal
 export async function generateGoalStrategy(user: any, goal: any): Promise<string> {
+  // Construct the prompt for the OpenAI API
   const prompt = `
     User Profile:
     - Annual Income: $${user.annualIncome}
@@ -89,13 +95,13 @@ export async function generateGoalStrategy(user: any, goal: any): Promise<string
   }
 }
 
-
+// Function to generate a chat response based on conversation history
 export async function generateChatResponse(messages: { role: string; content: string }[]): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: messages.map(msg => ({
-        role: msg.role as 'user' | 'assistant' | 'system',
+        role: msg.role as 'user' | 'assistant' | 'system', 
         content: msg.content
       })),
       max_tokens: 1000,
