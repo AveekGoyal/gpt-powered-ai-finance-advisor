@@ -5,7 +5,7 @@ Built with Next.js and AI technology, this open-source template helps developers
 
 ## Live Demo
 
-[https://finance-gpt-pi.vercel.app/](https://finance-gpt-pi.vercel.app/)
+[Live Link](https://gpt-powered-ai-finance-advisor.vercel.app/)
 
 ## Features
 
