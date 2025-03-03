@@ -30,8 +30,8 @@ Built with Next.js and AI technology, this open-source template helps developers
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/0xmetaschool/finance-gpt.git
-cd finance-gpt
+git clone https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor.git
+cd gpt-powered-ai-finance-advisor
 ```
 
 **2. Install dependencies:**
@@ -63,13 +63,6 @@ npm run dev
 
 **6. Open your browser and navigate to `http://localhost:3000`**
 
-## Screenshots
-
-<div style="float:left; display: flex; justify-content: space-between;">
-  <img src="https://github.com/0xmetaschool/finance-gpt/blob/main/public/images/finance-gpt-template-landing-page.png?raw=true" alt="FinanceGPT Template Landing Page screenshot" style="width: 49%; border: 2px solid black;" />
-  <img src="https://github.com/0xmetaschool/finance-gpt/blob/main/public/images/finance-gpt-template-home-page.png?raw=true" alt="FinanceGPT Template Home Page screenshot" style="width: 49%; border: 2px solid black;" />
-</div>
-
 
 ## How to use the application
 
@@ -84,16 +77,8 @@ npm run dev
 
 We love contributions! Here's how you can help make FinanceGPT even better:
 
-1. Fork the project (`gh repo fork https://github.com/0xmetaschool/ai-finance-advisor.git`)
+1. Fork the project (`gh repo fork https://github.com/AveekGoyal/gpt-powered-ai-finance-advisor.git`)
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/0xmetaschool/finance-gpt/blob/main/LICENSE) file for details.
-
-
-## Contact
-Please open an issue in the GitHub repository for any queries or support.
